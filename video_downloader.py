@@ -6,12 +6,12 @@ from datetime import datetime
 from moviepy.editor import VideoFileClip
 
 
-# Função para obter o timestamp atual
+# Function to get the current timestamp
 def get_current_timestamp():
     return int(datetime.now().timestamp() * 1e9)
 
 
-# Função para baixar um vídeo
+# Function to download a video
 def download_video(camera_info, group_id, timestamp, download_dir):
     video_url = f"{camera_info['url']}?time={timestamp}"
     video_filename = f"{group_id}_{camera_info['camera']}_{timestamp}.mp4"
@@ -24,11 +24,11 @@ def download_video(camera_info, group_id, timestamp, download_dir):
             video_file.write(response.content)
         return video_path
     else:
-        print(f"Erro ao baixar vídeo de {camera_info['name']}")
+        print(f"Error downloading video from {camera_info['name']}")
         return None
 
 
-# Função para processar um vídeo e cortar o último segundo se tiver mais de 9 segundos
+# Function to process a video and trim the last second if longer than 8 seconds
 def process_video(video_path):
     try:
         clip = VideoFileClip(video_path)
@@ -42,10 +42,10 @@ def process_video(video_path):
             os.rename(processed_path, video_path)
         clip.close()
     except Exception as e:
-        print(f"Erro ao processar o vídeo {video_path}: {e}")
+        print(f"Error processing video {video_path}: {e}")
 
 
-# Função para processar o download de vídeos de um grupo de câmeras
+# Function to process the download of videos from a group of cameras
 def process_camera_group(group_id, cameras, timestamp, download_dir, updated_cameras):
     for camera in cameras:
         video_path = download_video(camera, group_id, timestamp, download_dir)
@@ -55,28 +55,28 @@ def process_camera_group(group_id, cameras, timestamp, download_dir, updated_cam
         updated_cameras.append(camera)
 
 
-# Função principal para gerenciar os downloads
+# Main function to manage video downloads
 def download_videos_pipeline():
-    # Caminho para o arquivo JSON e diretório de download
+    # Path to the JSON file and download directory
     json_file_path = "./cameras.json"
     download_dir = "downloaded_videos"
 
-    # Criar diretório de download se não existir
+    # Create download directory if it doesn't exist
     if not os.path.exists(download_dir):
         os.makedirs(download_dir)
 
-    # Ler o arquivo JSON
+    # Read the JSON file
     with open(json_file_path, "r") as json_file:
         camera_data = json.load(json_file)
 
-    # Obter o timestamp atual
+    # Get the current timestamp
     timestamp = get_current_timestamp()
 
-    # Lista para armazenar threads e dados atualizados das câmeras
+    # List to store threads and updated camera data
     threads = []
     updated_camera_data = {}
 
-    # Iniciar download de vídeos para cada grupo de câmeras
+    # Start video download for each camera group
     for group_id, cameras in camera_data.items():
         updated_cameras = []
         updated_camera_data[group_id] = updated_cameras
@@ -87,7 +87,7 @@ def download_videos_pipeline():
         threads.append(thread)
         thread.start()
 
-    # Aguardar todas as threads terminarem
+    # Wait for all threads to finish
     for thread in threads:
         thread.join()
 
@@ -95,6 +95,6 @@ def download_videos_pipeline():
     return updated_camera_data
 
 
-# test
+# Test
 if __name__ == "__main__":
     download_videos_pipeline()
