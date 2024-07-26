@@ -1,0 +1,6 @@
+moviepy
+opencv-python
+torch 
+torchvision
+ultralytics
+flask

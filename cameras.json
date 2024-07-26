@@ -1,0 +1,62 @@
+{
+  "1" : [
+    {
+      "name": "Camberwell New Rd/Brixton Rd",
+      "camera": "1",
+      "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04503.mp4"
+    },
+    {
+      "name": "Harleyford St/Ken Pk Rd",
+      "camera": "2",
+      "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04332.mp4"
+    }
+  ],
+  "2" : [
+    {
+      "name": "Harleyford Rd/Vauxhall Grove",
+      "camera": "1",
+      "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04329.mp4"
+    },
+    {
+      "name": "Kennington Lane",
+      "camera": "2",
+      "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.04300.mp4"
+    }
+  ],
+  "3" : [
+    {
+      "name": "Parkhurst Rd by Holloway Rd",
+      "camera": "1",
+      "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.09605.mp4"
+    },
+    {
+      "name": "Seven Sisters Rd/Holloway Rd",
+      "camera": "2",
+      "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.09711.mp4"
+    }
+  ],
+  "4" : [
+    {
+      "name": "Marylebone Rd/Osnaburgh St",
+      "camera": "1",
+      "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.07364.mp4"
+    },
+    {
+      "name": "Marylebone Rd/Great Portland Street",
+      "camera": "2",
+      "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.07391.mp4"
+    }
+  ],
+  "5" : [
+    {
+      "name": "Buckingham Palace Rd/Eaton Lane",
+      "camera": "1",
+      "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.06519.mp4"
+    },
+    {
+      "name": "Victoria St / Buckingham Palace Rd",
+      "camera": "2",
+      "url": "https://s3-eu-west-1.amazonaws.com/jamcams.tfl.gov.uk/00001.06516.mp4"
+    }
+  ]
+}
