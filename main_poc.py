@@ -1,34 +1,22 @@
 import subprocess
 import os
-from flask import Flask, request, jsonify, send_from_directory
+import time
+from flask import Flask, request, send_file, jsonify
 from video_downloader import download_videos_pipeline
 from vehicles_detector import process_videos_pipeline
 
 app = Flask(__name__)
 
 # Path to the directory where videos are stored
-VIDEO_DIRECTORY = "./processed_videos"  # Replace with the actual path
+VIDEO_DIRECTORY = "a/path/to/your/public/data"  # Replace with the actual path
 
-
-@app.route("/get", methods=["GET"])
-def get_videos():
-    video_id = request.args.get("id")
-    if not video_id:
-        return jsonify({"error": "No id parameter provided"}), 400
-
-    videos_dict = download_videos_pipeline()
-    selected_videos_dict = {f"{video_id}": videos_dict[video_id]}
-    processed_videos_dict = process_videos_pipeline(selected_videos_dict)
+def auto_process_video(id, videos_dict):
+    selected_videos_dict = {f"{id}": videos_dict[id]}
+    processed_videos_dict = process_videos_pipeline(selected_videos_dict, VIDEO_DIRECTORY, id)
 
     # Create a simple response to send the videos
     response = processed_videos_dict
     return jsonify(response)
-
-
-@app.route("/videos/<path:filename>", methods=["GET"])
-def serve_video(filename):
-    return send_from_directory(VIDEO_DIRECTORY, filename)
-
 
 if __name__ == "__main__":
     # Clone the YOLOv5 repository
@@ -48,5 +36,9 @@ if __name__ == "__main__":
     if not os.path.exists("processed_videos"):
         os.makedirs("processed_videos")
 
-    # Run the app on all available IP addresses
-    app.run(host="0.0.0.0", port=35000)
+    with app.app_context():
+        while True:
+            videos_dict = download_videos_pipeline()
+            for i in range(1, 6):
+                auto_process_video(str(i), videos_dict)
+            time.sleep(300)

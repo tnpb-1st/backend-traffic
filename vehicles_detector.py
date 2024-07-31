@@ -3,7 +3,9 @@ import threading
 import cv2
 import torch
 from pathlib import Path
+import queue
 import ffmpeg
+import json
 from video_downloader import download_videos_pipeline
 
 # Load the YOLOv5 model
@@ -15,12 +17,15 @@ model = torch.hub.load(
 classes_of_interest = [2, 5, 7]  # 2: car, 5: bus, 7: truck
 
 
-def process_video(video_info):
+def process_video(video_info, output_path, id, result_queue):
     input_path = video_info["path"]
     tmp_path = os.path.join("tmp", os.path.basename(input_path))
-    if not os.path.exists("tmp"):
-        os.makedirs("tmp")
-    output_path = os.path.join("processed_videos", os.path.basename(input_path))
+    output_camera_path = os.path.join(output_path, "cameras", str(id))
+
+    os.makedirs("tmp", exist_ok=True)
+    os.makedirs(output_camera_path, exist_ok=True)
+
+    output_video_path = os.path.join(output_camera_path, os.path.basename(input_path))
 
     # Open video capture
     cap = cv2.VideoCapture(input_path)
@@ -79,9 +84,10 @@ def process_video(video_info):
     out.release()
 
     # Update the video_info dictionary
-    convert_mpv4_to_mp4(tmp_path, output_path)
-    video_info["processed_video_path"] = os.path.abspath(output_path)
+    convert_mpv4_to_mp4(tmp_path, output_video_path)
+    video_info["processed_video_path"] = os.path.abspath(output_video_path)
     video_info["number_vehicles"] = number_vehicles
+    result_queue.put(video_info)
 
 
 def convert_mpv4_to_mp4(input_path, output_path):
@@ -105,19 +111,31 @@ def convert_mpv4_to_mp4(input_path, output_path):
         print(f"An error occurred: {e}")
 
 
-def process_videos_pipeline(videos_dict):
+def process_videos_pipeline(videos_dict, output_path, id):
     threads = []
-
+    general_dict = { f"{id}": [] }
+    result_queue = queue.Queue()
     for key, videos in videos_dict.items():
         for video_info in videos:
-            t = threading.Thread(target=process_video, args=(video_info,))
+            t = threading.Thread(target=process_video, args=(video_info, output_path, id, result_queue))
             t.start()
             threads.append(t)
 
     for t in threads:
         t.join()
-    print(videos_dict)
-    return videos_dict
+
+    while not result_queue.empty():
+        result = result_queue.get()
+        general_dict[f"{id}"].append(result)
+
+    output_info_path = os.path.join(output_path, "info")
+    os.makedirs(output_info_path, exist_ok=True)
+    # Save video_info as JSON
+    json_output_path = os.path.join(output_info_path, f"{id}.json")
+    with open(json_output_path, "w") as json_file:
+        json.dump(general_dict, json_file, indent=4)
+
+    return general_dict
 
 
 # test

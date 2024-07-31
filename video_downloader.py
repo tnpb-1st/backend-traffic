@@ -14,7 +14,7 @@ def get_current_timestamp():
 # Function to download a video
 def download_video(camera_info, group_id, timestamp, download_dir):
     video_url = f"{camera_info['url']}?time={timestamp}"
-    video_filename = f"{group_id}_{camera_info['camera']}_{timestamp}.mp4"
+    video_filename = f"{group_id}_{camera_info['camera']}.mp4"
     video_path = os.path.join(download_dir, video_filename)
 
     response = requests.get(video_url)
